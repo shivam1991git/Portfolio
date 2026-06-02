@@ -7,7 +7,7 @@ import { memo } from "react";
 
 export default function About() {
   return (
-    <section id="about" className="scroll-mt-24 max-w-7xl mx-auto px-6 py-5">
+    <section id="about" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 pr-14 sm:px-6 sm:pr-16 md:pr-20 lg:pr-6">
 
       {/* Title */}
       <motion.div
@@ -15,22 +15,22 @@ export default function About() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="text-center mb-16"
+        className="mb-10 text-center sm:mb-16"
       >
-        <h2 className="text-5xl font-bold">
+        <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
           About{" "}
           <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
             Me
           </span>
         </h2>
 
-        <p className="text-gray-400 mt-4">
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
           Passionate about building impactful solutions that solve real-world problems
         </p>
       </motion.div>
 
       {/* Content Grid */}
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid gap-6 md:grid-cols-2 md:gap-8">
 
         {/* LEFT BIG CARD */}
         <motion.div
@@ -38,7 +38,7 @@ export default function About() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="glass p-8 rounded-2xl"
+          className="glass rounded-2xl p-5 sm:p-8"
         >
           <h3 className="text-2xl font-semibold text-blue-400 mb-4">
             My Journey
@@ -107,14 +107,14 @@ function InfoCardComponent({ icon, title, text }: { icon: React.ReactNode; title
   return (
     <motion.div
       variants={fadeRight}
-      className="glass p-6 rounded-xl flex gap-4 items-start"
+      className="glass flex items-start gap-4 rounded-xl p-5 sm:p-6"
     >
       <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400">
         {icon}
       </div>
 
       <div>
-        <h4 className="font-semibold text-lg">{title}</h4>
+        <h4 className="text-base font-semibold sm:text-lg">{title}</h4>
         <p className="text-gray-400 text-sm mt-1">{text}</p>
       </div>
     </motion.div>

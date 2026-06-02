@@ -5,9 +5,11 @@ import {
   useScroll,
   useTransform,
   useSpring,
+  useMotionValue,
+  useReducedMotion,
 } from "framer-motion";
 import type { MotionValue } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 export default function EliteMotionSystem() {
   // ===============================
@@ -15,6 +17,9 @@ export default function EliteMotionSystem() {
   // ===============================
 
   const { scrollYProgress } = useScroll();
+  const shouldReduceMotion = useReducedMotion();
+  const mouseX = useMotionValue(-500);
+  const mouseY = useMotionValue(-500);
 
   const progress = useSpring(scrollYProgress, {
     stiffness: 80,
@@ -27,24 +32,27 @@ export default function EliteMotionSystem() {
   const parallaxY = useTransform(progress, [0, 1], [0, -200]);
 
   const [mounted, setMounted] = useState(false);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     setMounted(true);
 
-    // Throttle mouse tracking to 60fps (16ms)
-    let lastTime = 0;
+    if (shouldReduceMotion) return;
+
+    let frame = 0;
     const move = (e: MouseEvent) => {
-      const now = Date.now();
-      if (now - lastTime >= 16) {
-        setMouse({ x: e.clientX, y: e.clientY });
-        lastTime = now;
-      }
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        mouseX.set(e.clientX - 200);
+        mouseY.set(e.clientY - 200);
+      });
     };
 
     window.addEventListener("mousemove", move, { passive: true });
-    return () => window.removeEventListener("mousemove", move);
-  }, []);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("mousemove", move);
+    };
+  }, [mouseX, mouseY, shouldReduceMotion]);
 
   // Prevent SSR mismatch
   if (!mounted) return null;
@@ -63,15 +71,16 @@ export default function EliteMotionSystem() {
       />
 
       {/* MOUSE GLOW */}
-      <div
-        className="absolute w-[400px] h-[400px] rounded-full blur-[120px] bg-blue-500/20"
+      <motion.div
+        className="absolute hidden h-[320px] w-[320px] rounded-full bg-blue-500/20 blur-[100px] sm:block lg:h-[400px] lg:w-[400px] lg:blur-[120px]"
         style={{
-          transform: `translate(${mouse.x - 200}px, ${mouse.y - 200}px)`,
+          x: mouseX,
+          y: mouseY,
         }}
       />
 
       {/* PARTICLES */}
-      {mounted && <ParticleField />}
+      {mounted && !shouldReduceMotion && <ParticleField />}
 
       {/* ENERGY WIRES removed to avoid duplicate scroll line — use ScrollEnergyLine component instead */}
     </div>

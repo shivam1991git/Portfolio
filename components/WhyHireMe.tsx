@@ -14,7 +14,7 @@ import { memo } from "react";
 
 export default function WhyHireMe() {
   return (
-    <section id="why" className="scroll-mt-24 max-w-7xl mx-auto px-6 py-5">
+    <section id="why" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 pr-14 sm:px-6 sm:pr-16 md:pr-20 lg:pr-6">
 
       {/* Title */}
       <motion.div
@@ -22,16 +22,16 @@ export default function WhyHireMe() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="text-center mb-16"
+        className="mb-10 text-center sm:mb-16"
       >
-        <h2 className="text-5xl font-bold">
+        <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
           Why{" "}
           <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
             Hire Me?
           </span>
         </h2>
 
-        <p className="text-gray-400 mt-4">
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
           What sets me apart as a developer and team member
         </p>
       </motion.div>
@@ -42,44 +42,45 @@ export default function WhyHireMe() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="grid md:grid-cols-3 gap-8"
+        className="grid gap-6 md:grid-cols-2 md:gap-8 xl:grid-cols-3"
       >
 
         <ValueCard
           icon={<Lightbulb />}
-          title="Problem-Solving Mindset"
-          text="I approach challenges analytically, breaking down complex problems into manageable solutions. Every bug is an opportunity to learn and improve."
+          title="Problem Solver"
+          text="I enjoy solving real-world challenges by analyzing requirements, identifying root causes, and building practical, scalable solutions."
         />
 
         <ValueCard
           icon={<Code2 />}
-          title="Clean Code Advocate"
-          text="Writing maintainable, well-documented code is non-negotiable. I follow best practices and design patterns to ensure quality and scalability."
+          title="Quality-Focused Development"
+          text="I write clean, maintainable, and reusable code while following industry best practices, ensuring long-term scalability and reliability."
         />
 
         <ValueCard
           icon={<Zap />}
-          title="Fast Learner"
-          text="Technology evolves rapidly, and so do I. I quickly adapt to new frameworks, tools, and methodologies."
+          title="Continuous Learner"
+          text="I actively explore new technologies and quickly adapt to modern tools, frameworks, and development practices to stay current."
         />
 
         <ValueCard
           icon={<Target />}
-          title="Ownership Mentality"
-          text="I take full responsibility for my work, from concept to deployment, ensuring production-ready results."
+          title="Ownership & Accountability"
+          text="From planning and development to deployment and maintenance, I take responsibility for delivering reliable and production-ready solutions."
         />
 
         <ValueCard
           icon={<Users />}
-          title="Team Collaboration"
-          text="I thrive in collaborative environments, communicating effectively with designers, PMs, and developers."
+          title="Collaborative Team Player"
+          text="I work effectively with developers, QA engineers, designers, and stakeholders to deliver high-quality products and meet business goals."
         />
 
         <ValueCard
           icon={<TrendingUp />}
-          title="Results-Driven"
-          text="I focus on delivering tangible results that drive business value and solve real problems."
+          title="Business-Oriented Mindset"
+          text="I focus on building solutions that improve user experience, optimize workflows, and create measurable business value."
         />
+
 
       </motion.div>
     </section>
@@ -92,17 +93,17 @@ function ValueCardComponent({ icon, title, text }: { icon: React.ReactNode; titl
   return (
     <motion.div
       variants={fadeUp}
-      className="glass p-8 rounded-2xl border border-white/10"
+      className="glass rounded-2xl border border-white/10 p-5 sm:p-8"
     >
       <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400 w-fit mb-4">
         {icon}
       </div>
 
-      <h3 className="text-xl font-semibold text-blue-400 mb-3">
+      <h3 className="mb-3 text-lg font-semibold text-blue-400 sm:text-xl">
         {title}
       </h3>
 
-      <p className="text-gray-400 leading-relaxed">
+      <p className="text-sm leading-relaxed text-gray-400 sm:text-base">
         {text}
       </p>
     </motion.div>

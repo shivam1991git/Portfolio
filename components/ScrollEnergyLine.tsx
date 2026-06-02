@@ -17,7 +17,7 @@ export default function ScrollEnergyLine() {
   const linePath = "M28 0 L28 1000";
 
   return (
-    <div className="pointer-events-none fixed right-0 top-0 z-50 h-dvh w-14 overflow-visible">
+    <div className="pointer-events-none fixed left-0 top-0 z-[9999] h-dvh w-14 overflow-visible">
 
       <svg
         className="w-full h-full"

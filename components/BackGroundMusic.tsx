@@ -54,8 +54,10 @@ export default function BackgroundMusic() {
       </audio>
 
       <button
+        type="button"
+        aria-label={playing ? "Pause background music" : "Play background music"}
         onClick={toggle}
-        className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white/10 backdrop-blur border border-white/20 hover:bg-white/20 transition"
+        className="fixed bottom-4 left-4 z-50 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-white/10 backdrop-blur transition hover:bg-white/20 sm:bottom-6 sm:left-6"
       >
         {playing ? <Volume2 size={20} /> : <VolumeX size={20} />}
       </button>

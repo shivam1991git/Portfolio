@@ -6,12 +6,13 @@ import { fadeUp, fadeRight } from "../lib/motion";
 import { Star, Github, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { memo } from "react";
+import ImageWithFallback from "./ImageWithFallback";
 
 export default function Projects() {
   return (
     <section
       id="projects"
-      className="scroll-mt-24 max-w-7xl mx-auto px-6 py-16 md:py-20"
+      className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 pr-14 sm:px-6 sm:py-16 sm:pr-16 md:py-20 md:pr-20 lg:pr-6"
     >
       {/* ===== Title ===== */}
       <motion.div
@@ -19,16 +20,16 @@ export default function Projects() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="text-center mb-16"
+        className="mb-10 text-center sm:mb-16"
       >
-        <h2 className="text-5xl font-bold">
+        <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
           Featured{" "}
           <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
             Projects
           </span>
         </h2>
 
-        <p className="text-gray-400 mt-4">
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
           Real-world applications showcasing my technical expertise
         </p>
       </motion.div>
@@ -60,23 +61,36 @@ export default function Projects() {
       />
 
       <ProjectItem
-        title="E-Commerce Platform"
-        imageSrc="/images/ChatGPT Image Feb 21, 2026, 12_22_55 PM.png"
-        imageAlt="E-Commerce Platform project screenshot"
-        description="Full-featured e-commerce system with cart, payments, and admin panel."
+        title="Ride-It - Cab Booking & Rental Platform"
+        imageSrc="/images/cab-booking.jpg"
+        imageAlt="Ride-It Platform Screenshot"
+        description="Designed and developed a MERN-based cab booking platform featuring secure authentication, ride booking workflows, driver management, administrative controls, and customer feedback modules. Built with a scalable client-server architecture and RESTful APIs."
         features={[
-          "Product catalog",
-          "Cart & checkout",
-          "Payment integration",
-          "Admin dashboard",
+          "Multi-role authentication (User, Driver, Admin)",
+          "Cab booking and ride management",
+          "Driver onboarding and management",
+          "Admin control panel",
+          "Customer profile management",
+          "Booking history tracking",
+          "Feedback & rating module",
         ]}
-        tech={["React", "Node.js", "MongoDB", "Stripe"]}
+        tech={[
+          "React.js",
+          "Redux",
+          "Node.js",
+          "Express.js",
+          "MongoDB",
+          "JWT",
+          "Axios",
+          "Bootstrap",
+          "REST API",
+          "Git",
+        ]}
       />
-
       <ProjectItem
-        title="Cab Booking"
-        imageSrc="/images/Cab Booking.jpg"
-        imageAlt="Cab Booking project screenshot"
+        title="E-Commerce Platform"
+        imageSrc="/images/e-commerce.jpg"
+        imageAlt="E-Commerce Platform project screenshot"
         description="Full-featured e-commerce system with cart, payments, and admin panel."
         features={[
           "Product catalog",
@@ -106,8 +120,17 @@ interface ProjectItemProps {
 
 function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description, features, tech }: ProjectItemProps) {
   const [open, setOpen] = useState(flagship || false);
-  const showProjectLinks =
-    title === "E-Commerce Platform" || title === "Cab Booking";
+  const showProjectLinks = title === "E-Commerce Platform" || title === "Ride-It - Cab Booking & Rental Platform";
+  const showLiveDemo = title === "Ride-It - Cab Booking & Rental Platform";
+  const githubLink =
+    title === "E-Commerce Platform"
+      ? "https://github.com/shivam1991git/e-commerce-website.git"
+      : "https://github.com/shivam1991git/RIDE-IT.git";
+
+  const liveDemoLink =
+    title === "Ride-It - Cab Booking & Rental Platform"
+      ? "https://ride-it-aed-git-main-thisisshivam1991-6980s-projects.vercel.app"
+      : "";
 
   return (
     <motion.div
@@ -115,9 +138,9 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
-      className="glass p-8 rounded-2xl border border-white/10 mb-8"
+      className="glass mb-6 rounded-2xl border border-white/10 p-5 sm:mb-8 sm:p-8"
     >
-      <div className="grid md:grid-cols-2 gap-8 items-center">
+      <div className="grid items-center gap-6 md:grid-cols-2 md:gap-8">
 
         {/* ===== LEFT CONTENT ===== */}
         <div>
@@ -130,14 +153,14 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
             </div>
           )}
 
-          <h3 className="text-2xl font-bold mb-3">{title}</h3>
+          <h3 className="mb-3 text-xl font-bold leading-tight sm:text-2xl">{title}</h3>
 
-          <p className="text-gray-400 mb-6">{description}</p>
+          <p className="mb-6 text-sm leading-6 text-gray-400 sm:text-base">{description}</p>
 
           {/* Toggle button */}
           <button
             onClick={() => setOpen(!open)}
-            className="text-blue-400 hover:text-blue-300 transition"
+            className="min-h-11 text-left text-blue-400 transition hover:text-blue-300"
           >
             {open ? "Hide details ↑" : "Click for more details ↓"}
           </button>
@@ -157,9 +180,9 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
                     Key Features:
                   </h4>
 
-                  <div className="grid grid-cols-2 gap-y-2 text-gray-400 text-sm">
+                  <div className="grid gap-2 text-sm text-gray-400 sm:grid-cols-2">
                     {features.map((f: string, i: number) => (
-                      <div key={i} className="flex gap-2">
+                      <div key={i} className="flex gap-2 leading-6">
                         <span className="text-blue-400">▸</span>
                         {f}
                       </div>
@@ -180,22 +203,27 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
                 </div>
 
                 {showProjectLinks && (
-                  <div className="flex gap-4 mt-6">
+                  <div className="mt-6 flex flex-col gap-3 min-[420px]:flex-row">
                     <a
-                      href="#"
-                      className="flex items-center gap-2 px-5 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition"
+                      href={githubLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/20 px-5 py-2 transition hover:bg-white/10"
                     >
                       <Github size={16} />
                       Code
                     </a>
-
-                    <a
-                      href="#"
-                      className="flex items-center gap-2 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition"
-                    >
-                      <ExternalLink size={16} />
-                      Live Demo
-                    </a>
+                    {showLiveDemo && (
+                      <a
+                        href={liveDemoLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2 transition hover:bg-blue-700"
+                      >
+                        <ExternalLink size={16} />
+                        Live Demo
+                      </a>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -206,9 +234,9 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
         {/* ===== RIGHT — SCREENSHOT ===== */}
         <motion.div
           variants={fadeRight}
-          className="relative flex h-56 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-4"
+          className="relative flex aspect-[16/10] min-h-44 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-3 sm:h-56 sm:p-4"
         >
-          <Image
+          <ImageWithFallback
             src={imageSrc}
             alt={imageAlt}
             fill
@@ -216,6 +244,9 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-contain p-4"
             priority={flagship}
+            onError={(error) => {
+              console.error(`Failed to load image: ${imageSrc}`, error);
+            }}
           />
         </motion.div>
 

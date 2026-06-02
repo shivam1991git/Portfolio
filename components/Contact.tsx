@@ -73,39 +73,21 @@ export default function Contact() {
         setSuccess("Message sent successfully!");
         setForm({ name: "", email: "", company: "", message: "" });
       } catch (err) {
-        setSuccess("Failed to send message. Try again.");
+        console.error("Email sending error:", err);
+        const errorMessage = err instanceof Error ? err.message : "Failed to send message. Try again.";
+        setSuccess(`Error: ${errorMessage}`);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     },
     [form]
   );
-  function ContactCardComponent({ icon, label, value, link }: { icon: React.ReactNode; label: string; value: string; link?: string; }) {
-    const content = (
-      <div className="glass p-5 rounded-xl flex items-center gap-4 border border-white/10 hover:border-blue-500/40 hover:bg-white/10 transition">
-        <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400">{icon}</div>
-
-        <div>
-          <p className="text-gray-400 text-sm">{label}</p>
-          <p className="font-medium">{value}</p>
-        </div>
-      </div>
-    );
-
-    if (link) {
-      return (
-        <a href={link} target="_blank" rel="noopener noreferrer" className="block">
-          {content}
-        </a>
-      );
-    }
-
-    return content;
-  }
-
-  const ContactCard = memo(ContactCardComponent);
   return (
-    <section id="contact" className="scroll-mt-24 max-w-7xl mx-auto px-6">
+    // <section id="contact" className="mx-auto max-w-7xl scroll-mt-24 px-4 pr-14 sm:px-6 sm:pr-16 md:pr-20 lg:pr-6">
+    <section
+      id="contact"
+      className="mx-auto max-w-7xl scroll-mt-24 px-4 sm:px-6 lg:px-8"
+    >
 
       {/* Title */}
       <motion.div
@@ -113,23 +95,24 @@ export default function Contact() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="text-center mb-20"
+        className="mb-10 text-center sm:mb-16 lg:mb-20"
       >
-        <h2 className="text-5xl font-bold">
+        <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
           Get In{" "}
           <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
             Touch
           </span>
         </h2>
 
-        <p className="text-gray-400 mt-4">
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
           Have a project in mind or want to discuss opportunities?
           I'd love to hear from you!
         </p>
       </motion.div>
 
       {/* Content Grid */}
-      <div className="grid md:grid-cols-2 gap-12">
+      {/* <div className="grid gap-8 md:grid-cols-2 lg:gap-12"> */}
+      <div className="flex justify-center">
 
         {/* ===== LEFT SIDE ===== */}
         <motion.div
@@ -138,11 +121,11 @@ export default function Contact() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <h3 className="text-2xl font-semibold text-blue-400 mb-6">
+          <h3 className="mb-4 text-xl font-semibold text-blue-400 sm:mb-6 sm:text-2xl">
             Let's Connect
           </h3>
 
-          <p className="text-gray-400 mb-8 leading-relaxed">
+          <p className="mb-6 text-sm leading-7 text-gray-400 sm:mb-8 sm:text-base">
             I'm always open to discussing new projects, creative ideas,
             or opportunities to be part of your vision. Whether you're
             looking for a dedicated full stack developer or just want
@@ -189,43 +172,42 @@ export default function Contact() {
         </motion.div>
 
         {/* ===== RIGHT SIDE — FORM ===== */}
-        <motion.div
+        {/* <motion.div
           variants={fadeRight}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="glass p-8 rounded-2xl border border-white/10"
+          className="glass rounded-2xl border border-white/10 p-5 sm:p-8"
         >
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
-            {/* NAME */}
             <div>
-              <label className="text-sm text-gray-400">Your Name*</label>
+              <label htmlFor="name" className="text-sm text-gray-400">Your Name*</label>
 
               <input
+                id="name"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Your Name"
-                className="w-full mt-2 p-3 rounded-lg bg-transparent border border-white/10 focus:border-blue-500 outline-none"
+                className="mt-2 w-full rounded-lg border border-white/10 bg-transparent p-3 outline-none transition focus:border-blue-500"
               />
 
               {errors.name && (
                 <p className="text-red-400 text-sm mt-1">{errors.name}</p>
               )}
             </div>
-
-            {/* EMAIL */}
             <div>
-              <label className="text-sm text-gray-400">Your Email*</label>
+              <label htmlFor="email" className="text-sm text-gray-400">Your Email*</label>
 
               <input
+                id="email"
                 name="email"
+                type="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="youremail@example.com"
-                className="w-full mt-2 p-3 rounded-lg bg-transparent border border-white/10 focus:border-blue-500 outline-none"
+                className="mt-2 w-full rounded-lg border border-white/10 bg-transparent p-3 outline-none transition focus:border-blue-500"
               />
 
               {errors.email && (
@@ -233,28 +215,29 @@ export default function Contact() {
               )}
             </div>
             <div>
-              <label className="text-sm text-gray-400">Company Link(If applicable)</label>
+              <label htmlFor="company" className="text-sm text-gray-400">Company Link(If applicable)</label>
 
               <input
+                id="company"
                 name="company"
                 value={form.company}
                 onChange={handleChange}
                 placeholder="Company Details"
-                className="w-full mt-2 p-3 rounded-lg bg-transparent border border-white/10 focus:border-blue-500 outline-none"
+                className="mt-2 w-full rounded-lg border border-white/10 bg-transparent p-3 outline-none transition focus:border-blue-500"
               />
             </div>
 
-            {/* MESSAGE */}
             <div>
-              <label className="text-sm text-gray-400">Your Message</label>
+              <label htmlFor="message" className="text-sm text-gray-400">Your Message</label>
 
               <textarea
+                id="message"
                 name="message"
                 rows={5}
                 value={form.message}
                 onChange={handleChange}
                 placeholder="Tell me about your project or opportunity..."
-                className="w-full mt-2 p-3 rounded-lg bg-transparent border border-white/10 focus:border-blue-500 outline-none"
+                className="mt-2 w-full resize-y rounded-lg border border-white/10 bg-transparent p-3 outline-none transition focus:border-blue-500"
               />
 
               {errors.message && (
@@ -263,27 +246,46 @@ export default function Contact() {
                 </p>
               )}
             </div>
-
-            {/* SUCCESS MESSAGE */}
             {success && (
               <p className="text-green-400 text-center">{success}</p>
             )}
-
-            {/* BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition disabled:opacity-50"
+              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 transition hover:bg-blue-700 disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send Message"}
               <Send size={18} />
             </button>
 
           </form>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );
 }
 
-/* ContactCard is defined above (supports optional link) */
+function ContactCardComponent({ icon, label, value, link }: { icon: React.ReactNode; label: string; value: string; link?: string; }) {
+  const content = (
+    <div className="glass flex items-center gap-3 rounded-xl border border-white/10 p-4 transition hover:border-blue-500/40 hover:bg-white/10 sm:gap-4 sm:p-5">
+      <div className="shrink-0 rounded-lg bg-blue-500/10 p-3 text-blue-400">{icon}</div>
+
+      <div className="min-w-0">
+        <p className="text-sm text-gray-400">{label}</p>
+        <p className="break-words text-sm font-medium sm:text-base">{value}</p>
+      </div>
+    </div>
+  );
+
+  if (link) {
+    return (
+      <a href={link} target="_blank" rel="noopener noreferrer" className="block">
+        {content}
+      </a>
+    );
+  }
+
+  return content;
+}
+
+const ContactCard = memo(ContactCardComponent);

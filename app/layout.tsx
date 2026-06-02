@@ -1,6 +1,6 @@
 import "./global.css";
 import Navbar from "../components/Navbar";
-import ScrollEnergyLine from "../components/ScrollEnergyLine";
+import NinjaProgress from "../components/NinjaProgress";
 import EliteMotionSystem from "../components/EliteMotionSystem";
 import BackgroundMusic from "../components/BackGroundMusic";
 export const metadata = {
@@ -21,7 +21,7 @@ export default function RootLayout({
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.25),transparent_40%)]" />
                 </div>
                 <Navbar />
-                <ScrollEnergyLine />
+                <NinjaProgress />
                 <EliteMotionSystem />
                 
                 {/* <BackgroundMusic/> */}

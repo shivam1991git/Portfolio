@@ -10,7 +10,7 @@ import Footer from "../components/Footer";
 
 export default function Home() {
   return (
-    <main className="space-y-32">
+    <main className="space-y-20 sm:space-y-24 lg:space-y-32">
       <Hero />
       <About />
       <Skills />

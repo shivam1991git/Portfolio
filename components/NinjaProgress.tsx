@@ -164,7 +164,7 @@ function NinjaProgress() {
   return (
     <aside
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[9999] h-dvh w-14 overflow-visible sm:w-16 md:w-20"
+      className="pointer-events-none fixed left-0 top-0 z-50 hidden h-dvh w-14 overflow-visible sm:block md:w-16 lg:w-20"
     >
       <div className="relative h-full w-full">
         <svg
@@ -254,7 +254,7 @@ function NinjaProgress() {
         </div>
 
         <motion.div
-          className="absolute left-1.5 h-12 w-12 sm:left-2 md:left-4"
+          className="absolute left-1.5 h-12 w-12 sm:left-2 md:left-3 lg:left-4"
           style={{
             top: y,
             filter: "drop-shadow(0 0 14px rgba(34,211,238,0.7))",
@@ -278,7 +278,7 @@ function NinjaProgress() {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-[3.5%] left-3 h-9 w-10 sm:left-4 md:left-6"
+          className="absolute bottom-[3.5%] left-3 h-9 w-10 sm:left-4 md:left-5 lg:left-6"
           animate={{
             filter: finished
               ? "drop-shadow(0 0 18px rgba(168,85,247,0.95))"
@@ -423,7 +423,7 @@ function FinishLine({ active }: { active: boolean }) {
 function Celebration() {
   return (
     <motion.div
-      className="absolute bottom-[7%] left-2 h-20 w-20 sm:left-3 md:left-5"
+      className="absolute bottom-[7%] left-2 h-20 w-20 sm:left-3 md:left-4 lg:left-5"
       initial={{ opacity: 0 }}
       animate={{ opacity: [0, 1, 0.85, 0] }}
       exit={{ opacity: 0 }}

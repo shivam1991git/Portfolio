@@ -120,7 +120,7 @@ export default function Hero() {
 
             {/* Soft Glow Around Image */}
             <div className="pointer-events-none absolute inset-0 rounded-[999px] shadow-[0_0_120px_rgba(59,130,246,0.25)]" />
-            <div className="mt-6 flex flex-wrap justify-center gap-3 sm:mt-8 md:justify-start">
+            <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:mt-8 sm:justify-center md:justify-start z-20">
 
               <button
                 onClick={() =>
@@ -128,16 +128,16 @@ export default function Hero() {
                     .getElementById("contact")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="flex min-h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 font-medium transition hover:opacity-90 sm:px-6"
+                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 font-medium transition hover:opacity-90 sm:px-6 text-white w-max"
               >
                 <Briefcase size={18} />
                 Hire Me
               </button>
 
               <a
-                href="/docs/Shivam Singh.pdf"
+                href="/docs/Shivam_Singh.pdf"
                 download
-                className="flex min-h-11 items-center gap-2 rounded-lg border border-white/20 px-5 py-3 font-medium transition hover:bg-white/10 sm:px-6"
+                className="flex items-center gap-2 rounded-lg border border-white/20 px-5 py-3 font-medium transition hover:bg-white/10 sm:px-6 text-white w-max"
               >
                 <Download size={18} />
                 Resume

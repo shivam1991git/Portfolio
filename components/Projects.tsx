@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { fadeUp, fadeRight } from "../lib/motion";
 import { Star, Github, ExternalLink } from "lucide-react";
-import Image from "next/image";
 import { memo } from "react";
 import ImageWithFallback from "./ImageWithFallback";
 
@@ -138,12 +137,12 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
-      className="glass mb-6 rounded-2xl border border-white/10 p-5 sm:mb-8 sm:p-8"
+      className="glass mb-6 overflow-hidden rounded-2xl border border-white/10 p-5 sm:mb-8 sm:p-8"
     >
-      <div className="grid items-center gap-6 md:grid-cols-2 md:gap-8">
+      <div className="grid min-w-0 items-center gap-6 md:grid-cols-2 md:gap-8">
 
         {/* ===== LEFT CONTENT ===== */}
-        <div>
+        <div className="min-w-0">
           {flagship && (
             <div className="flex items-center gap-2 text-yellow-400 mb-3">
               <Star size={18} />
@@ -234,7 +233,7 @@ function ProjectItemComponent({ flagship, title, imageSrc, imageAlt, description
         {/* ===== RIGHT — SCREENSHOT ===== */}
         <motion.div
           variants={fadeRight}
-          className="relative flex aspect-[16/10] min-h-44 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-3 sm:h-56 sm:p-4"
+          className="relative flex aspect-[16/10] w-full max-w-full min-w-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-3 sm:h-56 sm:p-4"
         >
           <ImageWithFallback
             src={imageSrc}

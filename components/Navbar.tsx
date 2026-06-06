@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Menu, Sun, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const SECTIONS = [
   "home",
@@ -19,28 +19,102 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
+    let frame = 0;
 
-    SECTIONS.forEach((id) => {
-      const section = document.getElementById(id);
-      if (!section) return;
+    const updateActiveSection = () => {
+      cancelAnimationFrame(frame);
 
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActive(id);
-          }
-        },
-        {
-          threshold: 0.6, // section visible %
+      frame = requestAnimationFrame(() => {
+        const sections = SECTIONS.map((id) => document.getElementById(id)).filter(
+          (section): section is HTMLElement => Boolean(section)
+        );
+
+        if (!sections.length) return;
+
+        const navHeight =
+          document.querySelector("nav")?.getBoundingClientRect().height ?? 0;
+        const viewportTop = navHeight;
+        const viewportBottom = window.innerHeight;
+        const scrollElement = document.scrollingElement ?? document.documentElement;
+
+        if (scrollElement.scrollTop <= 8) {
+          setActive("home");
+          return;
         }
-      );
 
-      observer.observe(section);
-      observers.push(observer);
+        if (
+          scrollElement.scrollTop + window.innerHeight >=
+          scrollElement.scrollHeight - 8
+        ) {
+          setActive(SECTIONS[SECTIONS.length - 1]);
+          return;
+        }
+
+        let nextActive = sections[0].id;
+        let largestVisibleArea = 0;
+
+        sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          const visibleTop = Math.max(rect.top, viewportTop);
+          const visibleBottom = Math.min(rect.bottom, viewportBottom);
+          const visibleArea = Math.max(0, visibleBottom - visibleTop);
+
+          if (visibleArea > largestVisibleArea) {
+            largestVisibleArea = visibleArea;
+            nextActive = section.id;
+          } else if (visibleArea === largestVisibleArea && visibleArea > 0) {
+            const currentTopDistance = Math.abs(rect.top - viewportTop);
+            const activeSection = document.getElementById(nextActive);
+            const activeTopDistance = activeSection
+              ? Math.abs(activeSection.getBoundingClientRect().top - viewportTop)
+              : Number.POSITIVE_INFINITY;
+
+            if (currentTopDistance < activeTopDistance) {
+              nextActive = section.id;
+            }
+          }
+        });
+
+        if (!largestVisibleArea) {
+          sections.forEach((section) => {
+            const distance = Math.abs(
+              section.getBoundingClientRect().top - viewportTop
+            );
+            const activeSection = document.getElementById(nextActive);
+            const activeDistance = activeSection
+              ? Math.abs(activeSection.getBoundingClientRect().top - viewportTop)
+              : Number.POSITIVE_INFINITY;
+
+            if (distance < activeDistance) {
+              nextActive = section.id;
+            }
+          });
+        }
+
+        setActive((current) => (current === nextActive ? current : nextActive));
+      });
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+    window.addEventListener("load", updateActiveSection);
+    window.addEventListener("hashchange", updateActiveSection);
+    document.addEventListener("scroll", updateActiveSection, {
+      capture: true,
+      passive: true,
     });
 
-    return () => observers.forEach((o) => o.disconnect());
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+      window.removeEventListener("load", updateActiveSection);
+      window.removeEventListener("hashchange", updateActiveSection);
+      document.removeEventListener("scroll", updateActiveSection, {
+        capture: true,
+      });
+    };
   }, []);
 
   useEffect(() => {
@@ -66,8 +140,7 @@ export default function Navbar() {
   );
 
   return (
-    <nav className="fixed top-0 z-[60] w-full border-b border-white/5 bg-slate-950/55 backdrop-blur-xl">
-
+    <nav className="fixed inset-x-0 top-0 z-[60] border-b border-white/5 bg-slate-950/55 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
 
         {/* Logo */}
@@ -83,6 +156,7 @@ export default function Navbar() {
             <a
               key={id}
               href={`#${id}`}
+              onClick={() => setActive(id)}
               className={`rounded-lg px-3 py-2 text-sm transition capitalize xl:px-4 ${active === id
                   ? "bg-blue-600/20 text-blue-400"
                   : "text-gray-300 hover:text-blue-400"
@@ -113,15 +187,18 @@ export default function Navbar() {
       </div>
 
       <div
-        className={`lg:hidden ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} transition-opacity duration-200`}
+        className={`absolute right-0 top-full lg:hidden ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} transition-opacity duration-200`}
       >
-        <div className="mx-4 mb-4 rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-2xl shadow-black/30 backdrop-blur-xl sm:mx-6">
+        <div className="mr-4 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-white/10 bg-slate-950/95 p-2 shadow-2xl shadow-black/30 backdrop-blur-xl sm:mr-6">
           <div className="grid gap-1">
             {navItems.map(({ id, label }) => (
               <a
                 key={id}
                 href={`#${id}`}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setActive(id);
+                  setOpen(false);
+                }}
                 className={`rounded-lg px-4 py-3 text-sm transition capitalize ${active === id
                     ? "bg-blue-600/20 text-blue-300"
                     : "text-gray-300 hover:bg-white/5 hover:text-blue-300"

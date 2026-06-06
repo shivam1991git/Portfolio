@@ -144,7 +144,7 @@ const SkillCard = memo(function SkillCardComponent({ title, items, color }: { ti
         scale: 1.02,
       }}
       transition={{ type: "spring", stiffness: 200 }}
-      className="glass rounded-2xl border border-white/10 p-5 transition-all duration-300 hover:border-blue-500/30 hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] sm:p-6"
+      className="glass rounded-2xl border border-white/10 p-5 transition-all hover:border-blue-500/30 hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] sm:p-6"
     >
       {/* Card Title */}
       <h3 className="mb-4 text-lg font-semibold text-blue-400 sm:text-xl">

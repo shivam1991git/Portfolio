@@ -1,27 +1,77 @@
 @import "tailwindcss";
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
+/* ================= DESIGN TOKENS ================= */
+
+@theme {
+  --color-ink-950: #0a0a0b;
+  --color-ink-900: #111113;
+  --color-ink-800: #18181b;
+  --color-ink-700: #232328;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-fg: #ededef;
+  --color-muted: #a1a1aa;
+  --color-subtle: #82828c;
+  --color-accent: #ff6b3d;
+  --color-accent-strong: #ff8a63;
+
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 45s) linear infinite;
+  --animate-pulse-dot: pulse-dot 2.4s ease-out infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes pulse-dot {
+    0% {
+      box-shadow: 0 0 0 0 rgb(74 222 128 / 0.55);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 8px rgb(74 222 128 / 0);
+    }
+  }
 }
 
-/* Base body styling */
+/* ================= BASE ================= */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  color-scheme: dark;
+}
+
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
-  overflow-x: hidden;
+  @apply bg-ink-950 font-sans text-fg antialiased;
+  overflow-x: clip;
   text-rendering: optimizeLegibility;
 }
 
-* {
-  min-width: 0;
+/* Static film grain — adds depth to flat surfaces at no runtime cost */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-a,
-button,
-input,
-textarea {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
+::selection {
+  @apply bg-accent text-ink-950;
+}
+
+:focus-visible {
+  @apply rounded-sm outline-2 outline-offset-4 outline-accent;
 }
 
 button,
@@ -51,27 +101,18 @@ canvas {
   }
 }
 
-/* Premium grid background */
-.bg-grid {
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(255, 255, 255, 0.05) 1px,
-    transparent 0
-  );
-  background-size: 40px 40px;
+/* ================= UTILITIES ================= */
+
+/* Hairline blueprint grid, faded toward the edges */
+@utility bg-blueprint {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 60% 40%, black 30%, transparent 75%);
 }
 
-/* Glass effect */
-.glass {
-  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl;
-}
-
-/* Gradient text */
-.gradient-text {
-  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent;
-}
-
-/* Glow CTA */
-.glow {
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+/* Soft fade at both ends of a horizontal scroller */
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }

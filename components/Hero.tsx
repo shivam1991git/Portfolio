@@ -1,182 +1,147 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, Download, Github, Instagram, Linkedin, Mail } from "lucide-react";
-import { memo } from "react";
-import ImageWithFallback from "./ImageWithFallback";
+import { ArrowDown, ArrowRight, Download } from "lucide-react";
+import { profile, socials } from "../lib/content";
+import { ease } from "../lib/motion";
+import HeroVisual from "./HeroVisual";
+import { Button } from "./ui/Button";
+import { SocialIcon } from "./ui/Icons";
+import { container, Serif } from "./ui/Section";
 
-export default function Hero() {
-  const scrollNext = () => {
-    document
-      .getElementById("about")
-      ?.scrollIntoView({ behavior: "smooth" });
-  };
-
+/** Each letter rises out of a mask — the h1 keeps the plain-text name for screen readers. */
+function SplitWord({ word, delay, className = "" }: { word: string; delay: number; className?: string }) {
   return (
-    <section
-      id="home"
-      className="relative flex min-h-screen items-center overflow-hidden bg-[#0b0b0d] pb-20 pt-24 sm:pb-24 lg:pt-20"
-    >
-      {/* ===== RIGHT GLOW BACKGROUND ===== */}
-      <div className="absolute right-[-260px] top-[-180px] h-[480px] w-[480px] bg-purple-600/20 blur-[140px] sm:right-[-200px] sm:h-[700px] sm:w-[700px] sm:blur-[180px]" />
-
-      {/* ===== MAIN CONTAINER ===== */}
-      <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 pr-14 sm:px-6 sm:pr-16 md:grid-cols-2 md:pr-20 lg:pr-6">
-
-        {/* ================= LEFT CONTENT ================= */}
-        <div className="z-10 flex flex-col justify-center text-center md:text-left">
-
-          {/* Availability */}
-          <div className="mb-6">
-            <span className="inline-flex max-w-full rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm text-blue-400 sm:text-base">
-              Available for opportunities
-            </span>
-          </div>
-
-          {/* Main Heading */}
-          <h1 className="text-[clamp(2.55rem,14vw,4.5rem)] font-bold leading-[1.05] text-white md:text-[clamp(3.75rem,6vw,4.5rem)]">
-            Hi, I'm{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Shivam Singh
-            </span>
-          </h1>
-
-          <h2 className="mt-5 text-xl text-gray-300 sm:text-2xl">
-            Full Stack Developer
-          </h2>
-
-          <p className="mx-auto mt-5 max-w-lg text-sm leading-7 text-gray-400 sm:text-base md:mx-0">
-            I build scalable, production-ready web applications
-            using the MERN stack. Transforming complex problems
-            into elegant solutions with clean code and modern
-            architecture.
-          </p>
-
-          {/* Buttons */}
-          <div className="mt-8 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:justify-center md:justify-start">
-            <a
-              href="#projects"
-              className="rounded-lg bg-blue-600 px-5 py-3 text-center transition hover:bg-blue-700 sm:px-6"
-            >
-              View Projects ↓
-            </a>
-
-            <a
-              href="#contact"
-              className="rounded-lg border border-white/20 px-5 py-3 text-center transition hover:bg-white/10 sm:px-6"
-            >
-              Contact Me
-            </a>
-          </div>
-
-
-          {/* Social Icons */}
-         <div className="mt-8 flex justify-center gap-3 md:justify-start">
-
-            <IconBox link="http://github.com/shivam1991git">
-              <Github size={20} />
-            </IconBox>
-
-            <IconBox link="https://www.linkedin.com/in/shivam-singh-010a61250">
-              <Linkedin size={20} />
-            </IconBox>
-
-            <IconBox link="mailto:shivamsingh.s1991@gmail.com">
-              <Mail size={20} />
-            </IconBox>
-            <IconBox link="https://www.instagram.com/onenonly_shiv?igsh=MXJpMmMwZm1vNGFpeQ%3D%3D&utm_source=qr">
-              <Instagram size={20} />
-            </IconBox>
-
-          </div>
-        </div>
-        {/* ================= RIGHT PORTRAIT ================= */}
-        <div className="flex items-center justify-center md:justify-end">
-
-          <motion.div
-            animate={{ y: [0, -20, 0] }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="relative h-[min(112vw,460px)] w-[min(70vw,300px)] sm:h-[520px] sm:w-[320px]"
-          >
-            {/* OVAL IMAGE CONTAINER */}
-            <div className="relative h-full w-full overflow-hidden rounded-[999px] bg-black">
-
-              <ImageWithFallback
-                src="/images/Shivaay.JPG"
-                alt="Shivam Singh"
-                fill
-                className="object-cover"
-                priority
-                onError={(error) => {
-                  console.error("Failed to load hero image:", error);
-                }}
-              />
-
-            </div>
-
-            {/* Soft Glow Around Image */}
-            <div className="pointer-events-none absolute inset-0 rounded-[999px] shadow-[0_0_120px_rgba(59,130,246,0.25)]" />
-            <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:mt-8 sm:justify-center md:justify-start z-20">
-
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("contact")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 font-medium transition hover:opacity-90 sm:px-6 text-white w-max"
-              >
-                <Briefcase size={18} />
-                Hire Me
-              </button>
-
-              <a
-                href="/docs/Shivam_Singh.pdf"
-                download
-                className="flex items-center gap-2 rounded-lg border border-white/20 px-5 py-3 font-medium transition hover:bg-white/10 sm:px-6 text-white w-max"
-              >
-                <Download size={18} />
-                Resume
-              </a>
-
-            </div>
-          </motion.div>
-
-        </div>
-      </div>
-
-      {/* ================= SCROLL ARROW ================= */}
-      <motion.div
-        onClick={scrollNext}
-        animate={{ y: [0, 14, 0] }}
-        transition={{ duration: 1.4, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 cursor-pointer text-2xl text-white sm:block"
-      >
-        ↓
-      </motion.div>
-
-      {/* ================= COLOR BLEND (IMPORTANT) ================= */}
-      {/* This creates smooth transition to next section */}
-      <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-b from-transparent to-slate-950 pointer-events-none" />
-
-    </section>
+    <span aria-hidden="true" className={`block overflow-hidden pb-[0.06em] ${className}`}>
+      {word.split("").map((char, i) => (
+        <motion.span
+          key={i}
+          className="inline-block"
+          initial={{ y: "110%" }}
+          animate={{ y: 0 }}
+          transition={{ duration: 1, ease, delay: delay + i * 0.04 }}
+        >
+          {char}
+        </motion.span>
+      ))}
+    </span>
   );
 }
 
-function IconBoxComponent({ children, link }: { children: React.ReactNode; link?: string }) {
-  if (link) {
-    return (
-      <a href={link} target="_blank" rel="noopener noreferrer" className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 transition hover:border-blue-500/40 hover:bg-white/10">
-        {children}
-      </a>
-    );
-  }
+const fadeIn = (delay: number) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease, delay },
+});
 
-  return <div className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5">{children}</div>;
+export default function Hero() {
+  return (
+    <section
+      id="home"
+      aria-labelledby="home-title"
+      className="relative isolate flex min-h-[100svh] flex-col overflow-hidden pt-28 sm:pt-32"
+    >
+      {/* Blueprint grid and a single light source behind the stack */}
+      <div aria-hidden="true" className="bg-blueprint absolute inset-0 -z-10" />
+      <div
+        aria-hidden="true"
+        className="absolute -right-40 top-1/4 -z-10 h-[420px] w-[420px] rounded-full bg-accent/[0.08] blur-[110px] lg:right-0 lg:h-[560px] lg:w-[560px]"
+      />
+
+      <div className={`${container} grid flex-1 items-center gap-14 pb-14 lg:grid-cols-12 lg:gap-6`}>
+        {/* ===== Copy ===== */}
+        <div className="min-w-0 lg:col-span-7">
+          <motion.p
+            {...fadeIn(0)}
+            className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-line bg-ink-900/70 py-1.5 pl-2.5 pr-4 text-[13px] text-muted backdrop-blur"
+          >
+            <span className="h-2 w-2 shrink-0 animate-pulse-dot rounded-full bg-green-400" />
+            <span className="truncate">
+              <span className="hidden sm:inline">Currently at </span>
+              <span className="sm:hidden">At </span>
+              <span className="text-fg">{profile.current.company}</span> — {profile.current.focus}
+            </span>
+          </motion.p>
+
+          <h1
+            id="home-title"
+            aria-label={profile.name}
+            className="mt-8 text-[clamp(3.6rem,15vw,8.75rem)] font-semibold leading-[0.9] tracking-[-0.055em]"
+          >
+            <SplitWord word={profile.firstName} delay={0.15} />
+            <SplitWord word={`${profile.lastName}.`} delay={0.3} />
+          </h1>
+
+          <motion.p {...fadeIn(0.7)} className="mt-6 text-2xl tracking-tight text-muted sm:text-3xl">
+            <Serif>
+              <span className="text-fg">Full stack developer</span>
+            </Serif>{" "}
+            — from interface to index.
+          </motion.p>
+
+          <motion.p {...fadeIn(0.8)} className="mt-5 max-w-xl text-pretty text-base leading-7 text-muted">
+            {profile.intro}
+          </motion.p>
+
+          <motion.div {...fadeIn(0.9)} className="mt-9 flex flex-col gap-3 min-[460px]:flex-row min-[460px]:items-center">
+            <Button href="#projects" magnetic>
+              View selected work
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+            </Button>
+            <Button href={profile.resume} variant="secondary" download magnetic>
+              <Download size={16} aria-hidden="true" />
+              Download résumé
+            </Button>
+          </motion.div>
+
+          <motion.div {...fadeIn(1)} className="mt-9 flex items-center gap-5">
+            <a
+              href="#contact"
+              className="text-sm text-muted underline decoration-line-strong underline-offset-[6px] transition-colors hover:text-fg hover:decoration-accent"
+            >
+              Get in touch
+            </a>
+            <span className="h-4 w-px bg-line-strong" aria-hidden="true" />
+            <ul className="flex items-center gap-1">
+              {socials.map((s) => (
+                <li key={s.key}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${s.label} profile`}
+                    className="grid h-10 w-10 place-items-center rounded-full text-muted transition-colors hover:bg-white/[0.05] hover:text-fg"
+                  >
+                    <SocialIcon name={s.key} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+
+        {/* ===== The Stack ===== */}
+        <motion.div
+          className="lg:col-span-5"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease, delay: 0.4 }}
+        >
+          <HeroVisual />
+        </motion.div>
+      </div>
+
+      {/* ===== Bottom rail ===== */}
+      <div className="border-t border-line">
+        <div className={`${container} flex items-center justify-between gap-4 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-subtle`}>
+          <a href="#about" className="inline-flex items-center gap-2 transition-colors hover:text-fg">
+            <ArrowDown size={13} aria-hidden="true" className="animate-bounce" />
+            Scroll to explore
+          </a>
+          <span className="hidden md:inline">React · Next.js · NestJS · MongoDB</span>
+          <span className="hidden sm:inline">Open to opportunities</span>
+        </div>
+      </div>
+    </section>
+  );
 }
-
-const IconBox = memo(IconBoxComponent);

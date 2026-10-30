@@ -1,124 +1,88 @@
-"use client";
+import Image from "next/image";
+import { Code2, Database, Rocket, Server } from "lucide-react";
+import { about, profile } from "../lib/content";
+import { Reveal } from "./ui/Reveal";
+import { Section, Serif } from "./ui/Section";
 
-import { motion } from "framer-motion";
-import { fadeLeft, fadeRight, fadeUp, stagger } from "../lib/motion";
-import { Code2, Server, Database, Rocket } from "lucide-react";
-import { memo } from "react";
+const focusIcons = [Code2, Server, Database, Rocket];
 
 export default function About() {
   return (
-    <section id="about" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 pr-14 sm:px-6 sm:pr-16 md:pr-20 lg:pr-6">
-
-      {/* Title */}
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="mb-10 text-center sm:mb-16"
-      >
-        <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
-          About{" "}
-          <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Me
-          </span>
-        </h2>
-
-        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
-          Passionate about building impactful solutions that solve real-world problems
-        </p>
-      </motion.div>
-
-      {/* Content Grid */}
-      <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-
-        {/* LEFT BIG CARD */}
-        <motion.div
-          variants={fadeLeft}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="glass rounded-2xl p-5 sm:p-8"
-        >
-          <h3 className="text-2xl font-semibold text-blue-400 mb-4">
-            My Journey
-          </h3>
-
-          <p className="text-gray-300 leading-relaxed">
-            My journey into software development began with curiosity and
-            evolved into a passion for creating solutions that make a difference.
-            As an <span className="text-blue-400 font-medium">MCA graduate</span> with over a year
-            of professional experience, I've transformed from an eager learner
-            into a confident full stack developer.
-          </p>
-
-          <p className="text-gray-300 mt-4 leading-relaxed">
-            Currently, I'm working on a comprehensive{" "}
-            <span className="text-blue-400 font-medium">
-              Learning Management System (LMS)
-            </span>,
-            where I handle both frontend and backend development.
-          </p>
-
-          <p className="text-gray-300 mt-4 leading-relaxed">
-            I believe in writing clean, maintainable code that delivers value
-            to users and stakeholders.
-          </p>
-        </motion.div>
-
-        {/* RIGHT STACKED CARDS */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="space-y-6"
-        >
-          <InfoCard
-            icon={<Code2 />}
-            title="Frontend Excellence"
-            text="Crafting responsive UIs with React, Next.js, and TypeScript"
-          />
-
-          <InfoCard
-            icon={<Server />}
-            title="Backend Mastery"
-            text="Building scalable APIs with Node.js, Express, and NestJS"
-          />
-
-          <InfoCard
-            icon={<Database />}
-            title="Data Architecture"
-            text="Designing efficient schemas with MongoDB and MySQL"
-          />
-
-          <InfoCard
-            icon={<Rocket />}
-            title="Full Stack Solutions"
-            text="End-to-end development from concept to deployment"
-          />
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-function InfoCardComponent({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
-  return (
-    <motion.div
-      variants={fadeRight}
-      className="glass flex items-start gap-4 rounded-xl p-5 sm:p-6"
+    <Section
+      id="about"
+      index="01"
+      label="About"
+      title={
+        <>
+          Engineer by training, <Serif>builder</Serif> by habit.
+        </>
+      }
+      intro={about.lead}
     >
-      <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400">
-        {icon}
-      </div>
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+        {/* ===== Portrait ===== */}
+        <Reveal className="lg:col-span-5">
+          <figure className="lg:sticky lg:top-28">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-line bg-ink-900">
+              <Image
+                src={profile.portrait}
+                alt={`Portrait of ${profile.name}`}
+                fill
+                placeholder="blur"
+                sizes="(min-width: 1024px) 420px, (min-width: 640px) 70vw, 100vw"
+                className="object-cover object-[50%_30%]"
+              />
+              <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-950/80 to-transparent" />
+            </div>
+            <figcaption className="mt-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.18em] text-subtle">
+              <span>{profile.name}</span>
+              <span>{profile.role}</span>
+            </figcaption>
+          </figure>
+        </Reveal>
 
-      <div>
-        <h4 className="text-base font-semibold sm:text-lg">{title}</h4>
-        <p className="text-gray-400 text-sm mt-1">{text}</p>
+        {/* ===== Story ===== */}
+        <div className="lg:col-span-7 lg:pl-6">
+          <Reveal>
+            {about.paragraphs.map((text, i) => (
+              <p
+                key={i}
+                className={
+                  i === 0
+                    ? "text-pretty text-xl leading-relaxed tracking-tight text-fg sm:text-2xl"
+                    : "mt-5 text-pretty text-base leading-7 text-muted"
+                }
+              >
+                {text}
+              </p>
+            ))}
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <dl className="mt-12 grid border-t border-line sm:grid-cols-2">
+              {about.facts.map((fact) => (
+                <div key={fact.label} className="border-b border-line py-5 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-subtle">{fact.label}</dt>
+                  <dd className="mt-2 text-[15px] text-fg">{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          <Reveal delay={0.15} className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+            {about.focus.map((item, i) => {
+              const Icon = focusIcons[i];
+              return (
+                <div key={item.title} className="bg-ink-950 p-6 transition-colors duration-300 hover:bg-ink-900">
+                  <Icon size={20} className="text-accent" aria-hidden="true" />
+                  <h3 className="mt-5 text-lg font-medium tracking-tight">{item.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-muted">{item.text}</p>
+                </div>
+              );
+            })}
+          </Reveal>
+        </div>
       </div>
-    </motion.div>
+    </Section>
   );
 }
-
-const InfoCard = memo(InfoCardComponent);

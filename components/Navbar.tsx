@@ -1,215 +1,258 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight, Command, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { profile, sections } from "../lib/content";
+import { ease } from "../lib/motion";
+import CommandPalette from "./CommandPalette";
 
-const SECTIONS = [
-  "home",
-  "about",
-  "skills",
-  "projects",
-  "experience",
-  "education",
-  "why",
-  "contact",
-];
+const SECTION_IDS = sections.map((s) => s.id);
+const NAV_LINKS = sections.filter((s) => s.id !== "home");
+const noopSubscribe = () => () => {};
 
-export default function Navbar() {
-  const [active, setActive] = useState("home");
-  const [open, setOpen] = useState(false);
+/** Tracks which section occupies most of the viewport below the nav. */
+function useActiveSection() {
+  const [active, setActive] = useState<string>("home");
 
   useEffect(() => {
     let frame = 0;
 
-    const updateActiveSection = () => {
+    const update = () => {
       cancelAnimationFrame(frame);
 
       frame = requestAnimationFrame(() => {
-        const sections = SECTIONS.map((id) => document.getElementById(id)).filter(
-          (section): section is HTMLElement => Boolean(section)
+        const els = SECTION_IDS.map((id) => document.getElementById(id)).filter(
+          (el): el is HTMLElement => Boolean(el)
         );
+        if (!els.length) return;
 
-        if (!sections.length) return;
-
-        const navHeight =
-          document.querySelector("nav")?.getBoundingClientRect().height ?? 0;
-        const viewportTop = navHeight;
+        const scroller = document.scrollingElement ?? document.documentElement;
+        const viewportTop = 88;
         const viewportBottom = window.innerHeight;
-        const scrollElement = document.scrollingElement ?? document.documentElement;
 
-        if (scrollElement.scrollTop <= 8) {
-          setActive("home");
-          return;
+        if (scroller.scrollTop <= 8) return setActive("home");
+        if (scroller.scrollTop + window.innerHeight >= scroller.scrollHeight - 8) {
+          return setActive(SECTION_IDS[SECTION_IDS.length - 1]);
         }
 
-        if (
-          scrollElement.scrollTop + window.innerHeight >=
-          scrollElement.scrollHeight - 8
-        ) {
-          setActive(SECTIONS[SECTIONS.length - 1]);
-          return;
-        }
+        let next = els[0].id;
+        let largest = 0;
 
-        let nextActive = sections[0].id;
-        let largestVisibleArea = 0;
-
-        sections.forEach((section) => {
-          const rect = section.getBoundingClientRect();
-          const visibleTop = Math.max(rect.top, viewportTop);
-          const visibleBottom = Math.min(rect.bottom, viewportBottom);
-          const visibleArea = Math.max(0, visibleBottom - visibleTop);
-
-          if (visibleArea > largestVisibleArea) {
-            largestVisibleArea = visibleArea;
-            nextActive = section.id;
-          } else if (visibleArea === largestVisibleArea && visibleArea > 0) {
-            const currentTopDistance = Math.abs(rect.top - viewportTop);
-            const activeSection = document.getElementById(nextActive);
-            const activeTopDistance = activeSection
-              ? Math.abs(activeSection.getBoundingClientRect().top - viewportTop)
-              : Number.POSITIVE_INFINITY;
-
-            if (currentTopDistance < activeTopDistance) {
-              nextActive = section.id;
-            }
+        els.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const visible = Math.max(0, Math.min(rect.bottom, viewportBottom) - Math.max(rect.top, viewportTop));
+          if (visible > largest) {
+            largest = visible;
+            next = el.id;
           }
         });
 
-        if (!largestVisibleArea) {
-          sections.forEach((section) => {
-            const distance = Math.abs(
-              section.getBoundingClientRect().top - viewportTop
-            );
-            const activeSection = document.getElementById(nextActive);
-            const activeDistance = activeSection
-              ? Math.abs(activeSection.getBoundingClientRect().top - viewportTop)
-              : Number.POSITIVE_INFINITY;
-
-            if (distance < activeDistance) {
-              nextActive = section.id;
-            }
-          });
-        }
-
-        setActive((current) => (current === nextActive ? current : nextActive));
+        setActive((current) => (current === next ? current : next));
       });
     };
 
-    updateActiveSection();
-    window.addEventListener("scroll", updateActiveSection, { passive: true });
-    window.addEventListener("resize", updateActiveSection);
-    window.addEventListener("load", updateActiveSection);
-    window.addEventListener("hashchange", updateActiveSection);
-    document.addEventListener("scroll", updateActiveSection, {
-      capture: true,
-      passive: true,
-    });
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    window.addEventListener("hashchange", update);
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", updateActiveSection);
-      window.removeEventListener("resize", updateActiveSection);
-      window.removeEventListener("load", updateActiveSection);
-      window.removeEventListener("hashchange", updateActiveSection);
-      document.removeEventListener("scroll", updateActiveSection, {
-        capture: true,
-      });
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      window.removeEventListener("hashchange", update);
     };
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
+  return [active, setActive] as const;
+}
 
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+export default function Navbar() {
+  const [active, setActive] = useActiveSection();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const isMac = useSyncExternalStore(
+    noopSubscribe,
+    () => /Mac|iPhone|iPad/.test(navigator.platform),
+    () => true
+  );
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setMenuOpen(false);
+        setPaletteOpen((open) => !open);
+      }
     };
 
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [open]);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-  const navItems = useMemo(
-    () =>
-      SECTIONS.map((id) => {
-        let label = id.charAt(0).toUpperCase() + id.slice(1);
-        if (id === "home") label = "Home";
-        if (id === "why") label = "Why Hire Me";
-        return { id, label };
-      }),
-    []
-  );
+  // Mobile menu: lock page scroll, close on Escape, manage focus
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const toggle = toggleRef.current;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    firstLinkRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      toggle?.focus();
+    };
+  }, [menuOpen]);
+
+  const closeMenu = (id?: string) => {
+    if (id) setActive(id);
+    setMenuOpen(false);
+  };
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-[60] border-b border-white/5 bg-slate-950/55 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-
-        {/* Logo */}
-        <a href="#home" className="text-lg font-bold sm:text-xl" onClick={() => setOpen(false)}>
-          <span className="text-white">TECH</span>
-          <span className="text-sky-400 font-extrabold">TALK</span>
-        </a>
-
-        {/* Links */}
-        <div className="hidden items-center gap-2 lg:flex">
-
-          {navItems.map(({ id, label }) => (
-            <a
-              key={id}
-              href={`#${id}`}
-              onClick={() => setActive(id)}
-              className={`rounded-lg px-3 py-2 text-sm transition capitalize xl:px-4 ${active === id
-                  ? "bg-blue-600/20 text-blue-400"
-                  : "text-gray-300 hover:text-blue-400"
-                }`}
+    <>
+      <header className="fixed inset-x-0 top-0 z-[60]">
+        {/* ===== Mobile menu overlay ===== */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              id="mobile-menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 flex flex-col bg-ink-950/95 px-5 pb-8 pt-28 backdrop-blur-xl sm:px-8 xl:hidden"
             >
-              {label}
-            </a>
-          ))}
+              <nav aria-label="Mobile" className="flex-1 overflow-y-auto">
+                <ul className="divide-y divide-line border-y border-line">
+                  {NAV_LINKS.map(({ id, label }, index) => (
+                    <motion.li
+                      key={id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease, delay: 0.04 * index }}
+                    >
+                      <a
+                        ref={index === 0 ? firstLinkRef : undefined}
+                        href={`#${id}`}
+                        onClick={() => closeMenu(id)}
+                        aria-current={active === id ? "true" : undefined}
+                        className="flex items-baseline gap-4 py-4 text-3xl font-medium tracking-tight"
+                      >
+                        <span className="font-mono text-xs text-subtle">0{index + 1}</span>
+                        <span className={active === id ? "text-accent" : "text-fg"}>{label}</span>
+                      </a>
+                    </motion.li>
+                  ))}
+                </ul>
+              </nav>
 
-          {/* <button
-            type="button"
-            aria-label="Theme preference"
-            className="grid h-10 w-10 place-items-center rounded-lg text-gray-300 transition hover:bg-white/5 hover:text-blue-400"
+              <div className="mt-8 flex flex-col gap-3 min-[400px]:flex-row">
+                <a
+                  href={profile.resume}
+                  download
+                  className="inline-flex h-12 items-center justify-center rounded-full bg-accent text-sm font-medium text-ink-950 min-[400px]:flex-1"
+                >
+                  Download résumé
+                </a>
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-line-strong text-sm font-medium min-[400px]:flex-1"
+                >
+                  Email me
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ===== Bar ===== */}
+        <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pt-4 sm:px-8">
+          <a
+            href="#home"
+            onClick={() => closeMenu("home")}
+            className="flex h-11 items-center gap-3 rounded-full border border-line bg-ink-900/70 pl-1.5 pr-4 backdrop-blur-xl"
+            aria-label={`${profile.name} — back to top`}
           >
-            <Sun size={18} />
-          </button> */}
-        </div>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-fg text-[13px] font-bold tracking-tighter text-ink-950">
+              <span>
+                S<span className="text-accent">S</span>
+              </span>
+            </span>
+            <span className="whitespace-nowrap text-sm font-medium tracking-tight">{profile.name}</span>
+          </a>
 
-        <button
-          type="button"
-          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition hover:bg-white/10 lg:hidden"
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
-
-      <div
-        className={`absolute right-0 top-full lg:hidden ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} transition-opacity duration-200`}
-      >
-        <div className="mr-4 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-white/10 bg-slate-950/95 p-2 shadow-2xl shadow-black/30 backdrop-blur-xl sm:mr-6">
-          <div className="grid gap-1">
-            {navItems.map(({ id, label }) => (
+          <nav
+            aria-label="Primary"
+            className="hidden items-center rounded-full border border-line bg-ink-900/70 p-1 backdrop-blur-xl xl:flex"
+          >
+            {NAV_LINKS.map(({ id, label }) => (
               <a
                 key={id}
                 href={`#${id}`}
-                onClick={() => {
-                  setActive(id);
-                  setOpen(false);
-                }}
-                className={`rounded-lg px-4 py-3 text-sm transition capitalize ${active === id
-                    ? "bg-blue-600/20 text-blue-300"
-                    : "text-gray-300 hover:bg-white/5 hover:text-blue-300"
-                  }`}
+                onClick={() => setActive(id)}
+                aria-current={active === id ? "true" : undefined}
+                className={`relative whitespace-nowrap rounded-full px-3.5 py-2 text-[13px] transition-colors ${
+                  active === id ? "text-fg" : "text-muted hover:text-fg"
+                }`}
               >
-                {label}
+                {active === id && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-full bg-white/[0.08]"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+                <span className="relative">{label}</span>
               </a>
             ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
+              aria-label="Open command menu"
+              className="hidden h-11 items-center gap-2 rounded-full border border-line bg-ink-900/70 px-4 text-[13px] text-muted backdrop-blur-xl transition-colors hover:text-fg md:inline-flex"
+            >
+              <Command size={14} aria-hidden="true" />
+              <kbd className="whitespace-nowrap font-mono text-[11px]">{isMac ? "⌘K" : "Ctrl K"}</kbd>
+            </button>
+
+            <a
+              href={profile.resume}
+              download
+              className="hidden h-11 items-center gap-1.5 rounded-full bg-fg px-4 text-[13px] font-medium text-ink-950 transition-colors hover:bg-accent sm:inline-flex"
+            >
+              Résumé
+              <ArrowUpRight size={14} aria-hidden="true" />
+            </a>
+
+            <button
+              ref={toggleRef}
+              type="button"
+              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              onClick={() => setMenuOpen((open) => !open)}
+              className="grid h-11 w-11 place-items-center rounded-full border border-line bg-ink-900/70 backdrop-blur-xl xl:hidden"
+            >
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
-      </div>
-    </nav>
+      </header>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+    </>
   );
 }
